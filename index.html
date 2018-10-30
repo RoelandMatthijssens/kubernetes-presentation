@@ -1,0 +1,389 @@
+<!doctype html>
+<html lang='en'>
+<head>
+<meta charset='utf-8'>
+<title>Kubernetes</title>
+<meta content='Dependency management on the blockchain' name='description'>
+<meta content='Roeland Matthijssens' name='author'>
+<meta content='yes' name='apple-mobile-web-app-capable'>
+<meta content='black-translucent' name='apple-mobile-web-app-status-bar-style'>
+<meta content='width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no' name='viewport'>
+<link href='reveal.js/css/reveal.min.css' rel='stylesheet'>
+<link href='reveal.js/css/theme/beige.css' id='theme' rel='stylesheet'>
+<!-- For syntax highlighting -->
+<link href='reveal.js/lib/css/zenburn.css' rel='stylesheet'>
+<!-- For nice fonts, load more here -->
+<!-- Go to http://www.google.com/webfonts -->
+<!-- * Add to collection -->
+<!-- * Use -->
+<!-- * pick which styles -->
+<!-- * find the link to add here -->
+<link href='http://fonts.googleapis.com/css?family=Merriweather:400,700' rel='stylesheet' type='text/css'>
+<link href='http://fonts.googleapis.com/css?family=Open+Sans:600' rel='stylesheet' type='text/css'>
+<!-- Nice fonts combos: -->
+<!-- http://designshack.net/articles/css/10-great-google-font-combinations-you-can-copy/ -->
+<!-- Override the reveal.js fonts here, after loading them above -->
+<style>
+  .reveal h1 {
+    font-family: 'Merriweather', serif;
+    text-transform: none;
+    line-height: 1.0em;
+  }
+  .reveal h2 {
+    font-family: 'Merriweather', serif;
+    text-transform: none;
+  }
+  .reveal h3 {
+    font-family: 'Open Sans', sans-serif;
+    text-transform: none;
+  }
+  .reveal p {
+    font-family: 'Open Sans', sans-serif;
+    text-transform: none;
+  }
+  .reveal a {
+    text-decoration: underline !important;
+  }
+  
+  /* Misc layout */
+  table.centric {
+    margin-left: auto;
+    margin-right: auto;
+  }
+  table.centric td {
+    vertical-align: middle;
+    text-align: center;
+  }
+  th{
+    font-weight: bold !important;
+    padding-bottom: 1em !important;
+  }
+  td, th {
+    border-left: 1px solid grey !important;
+    padding-left: 1em !important;
+    padding-bottom: 0.3em !important;
+  }
+  li {
+    text-align:left;
+    padding: 9px !important;
+  }
+  ul.no-bullets {
+    list-style-type:none;
+  }
+  
+  h3{
+    margin: 60px;
+  }
+  
+  /* Styles for the specific data-state for the last slide */
+  html.the-end .state-background {
+    background-color: rgba(0,0,0, 0.8);
+  }
+  
+  
+  .strike {
+    text-decoration: line-through;
+  }
+</style>
+<!-- If the query includes 'print-pdf', use the PDF print sheet -->
+<script>
+  document.write( '<link rel="stylesheet" href="reveal.js/css/print/' + ( window.location.search.match( /print-pdf/gi ) ? 'pdf' : 'paper' ) + '.css" type="text/css" media="print">' );
+        /[if lt IE 9]
+  <script src="reveal.js/lib/js/html5shiv.js"></script>
+</script>
+</head>
+<body>
+<div class='reveal'>
+<!-- Any section element inside of this container is displayed as a slide -->
+<div class='slides'>
+<section>
+<h1>Kubernetes</h1>
+<br>
+<p>Roeland Matthijssens</p>
+</section>
+<section>
+<h1>Content</h1>
+<ul>
+<li>Kubernetes bootcamp</li>
+<li>Helm overview</li>
+<li>Deploy vikinglabs</li>
+</ul>
+</section>
+<section>
+<h1>Bootcamp</h1>
+<ul>
+<li>Installation</li>
+<li>Cluster</li>
+<li>Namespaces</li>
+<li>Deployment</li>
+<li>Pods</li>
+<li>Scaling</li>
+</ul>
+</section>
+<section>
+<section>
+<h1>Installation</h1>
+<h3>Prerequisites</h3>
+<ul>
+<li>kubectl</li>
+<li>aws</li>
+<li>aws-cli</li>
+<li>aws-iam-authenticator</li>
+<li>Authenticate on AWS</li>
+</ul>
+<br>
+<br>
+<a href='https://docs.aws.amazon.com/eks/latest/userguide/getting-started.html'>
+Install instructions
+</a>
+</section>
+</section>
+<section>
+<section>
+<h1>Cluster</h1>
+<center>
+<table>
+<tbody>
+<tr>
+<td>Node</td>
+<td>VM/physical machine. Serves as a worker in the cluster</td>
+</tr>
+<tr>
+<td>Master</td>
+<td>Manages the cluster</td>
+</tr>
+<tr>
+<td>Kubelet</td>
+<td>Manager application on each node. Talks to master</td>
+</tr>
+</tbody>
+</table>
+</center>
+</section>
+<section>
+<img src='images/module_01_cluster.svg' style='width:60%'>
+</section>
+<section>
+<h3>Load context</h3>
+<pre><code>➤ aws eks update-kubeconfig --name UNL-IRE-EKS-PROD-1&#x000A;## Name is found in the aws admin console&#x000A;&#x000A;➤ kubectl config get-contexts&#x000A;CURRENT   NAME                                                            CLUSTER                                                         AUTHINFO                                                        NAMESPACE&#x000A;*         arn:aws:eks:eu-west-1:760949815414:cluster/UNL-IRE-EKS-PROD-1   arn:aws:eks:eu-west-1:760949815414:cluster/UNL-IRE-EKS-PROD-1   arn:aws:eks:eu-west-1:760949815414:cluster/UNL-IRE-EKS-PROD-1&#x000A;&#x000A;## You can rename the context&#x000A;➤ vim ~/.kube/config&#x000A;➤ kubectl config get-contexts&#x000A;CURRENT   NAME      CLUSTER   AUTHINFO                                                       NAMESPACE&#x000A;          eks-prod  eks-prod  arn:aws:eks:eu-west-1:760949815414:cluster/UNL-IRE-EKS-PROD-1</code></pre>
+</section>
+<section>
+<h3>Interact with clusters</h3>
+<pre><code>➤ kubectl config get-clusters&#x000A;NAME&#x000A;google&#x000A;kubernetes&#x000A;eks-prod</code></pre>
+<pre><code>➤ kubectl config use-context eks-prod&#x000A;Switched to context "eks-prod".&#x000A;➤ kubectl config current-context&#x000A;eks-prod&#x000A;</code></pre>
+</section>
+</section>
+<section>
+<section>
+<h1>Namespaces</h1>
+<p>Used to group containers, config, pods, ...</p>
+</section>
+<section>
+<h3>Creating</h3>
+<pre><code>➤ kubectl get namespaces&#x000A;NAME          STATUS   AGE&#x000A;default       Active   28d&#x000A;harryporter   Active   12d&#x000A;kube-public   Active   28d&#x000A;kube-system   Active   28d&#x000A;vikinglab     Active   11d</code></pre>
+<pre><code>➤ kubectl create namespace test&#x000A;namespace/test created</code></pre>
+<pre><code>➤ kubectl get namespaces&#x000A;NAME          STATUS   AGE&#x000A;default       Active   28d&#x000A;harryporter   Active   12d&#x000A;kube-public   Active   28d&#x000A;kube-system   Active   28d&#x000A;test          Active   1m&#x000A;vikinglab     Active   11d</code></pre>
+</section>
+<section>
+<h3>Deleting</h3>
+<pre><code>➤ kubectl delete namespace test&#x000A;namespace "test" deleted</code></pre>
+<pre><code>➤ kubectl get namespaces&#x000A;NAME          STATUS   AGE&#x000A;default       Active   28d&#x000A;harryporter   Active   12d&#x000A;kube-public   Active   28d&#x000A;kube-system   Active   28d&#x000A;vikinglab     Active   11d&#x000A;</code></pre>
+</section>
+</section>
+<section>
+<section>
+<h1>Deployments</h1>
+<ul>
+<li>Defines deployment of application on the cluster</li>
+<li>Defines replication details</li>
+<li>
+<a href='https://kubernetes.io/docs/concepts/workloads/controllers/deployment/'>More info</a>
+</li>
+</ul>
+</section>
+<section>
+<img src='images/module_02_first_app.svg' style='width:60%'>
+</section>
+<section>
+<pre><code>➤ kubectl get deployments --all-namespaces&#x000A;NAMESPACE     NAME                      DESIRED   CURRENT   UP-TO-DATE   AVAILABLE   AGE&#x000A;harryporter   pgp-server                1         1         1            1           11d&#x000A;kube-system   heapster                  1         1         1            1           20d&#x000A;kube-system   kube-dns                  1         1         1            1           28d&#x000A;kube-system   kubernetes-dashboard      1         1         1            1           20d&#x000A;kube-system   monitoring-influxdb       1         1         1            1           20d&#x000A;kube-system   tiller-deploy             1         1         1            1           11d&#x000A;vikinglab     vikinglab-db-postgresql   1         1         1            1           11d&#x000A;vikinglab     vikinglab-staging-web     2         2         2            2           11d</code></pre>
+<pre><code>➤ kubectl --namespace vikinglab get deployments&#x000A;NAME                      DESIRED   CURRENT   UP-TO-DATE   AVAILABLE   AGE&#x000A;vikinglab-db-postgresql   1         1         1            1           11d&#x000A;vikinglab-staging-web     2         2         2            2           11d</code></pre>
+</section>
+<section>
+<h3>example yaml</h3>
+<pre><code>apiVersion: apps/v1&#x000A;kind: Deployment&#x000A;metadata:&#x000A;  name: nginx-deployment&#x000A;  labels:&#x000A;    app: nginx&#x000A;spec:&#x000A;  replicas: 3&#x000A;  selector:&#x000A;    matchLabels:&#x000A;      app: nginx&#x000A;  template:&#x000A;    metadata:&#x000A;      labels:&#x000A;        app: nginx&#x000A;    spec:&#x000A;      containers:&#x000A;      - name: nginx&#x000A;        image: nginx:1.15.4&#x000A;        ports:&#x000A;        - containerPort: 80</code></pre>
+</section>
+<section>
+<h3>Deploy Example</h3>
+<pre><code>➤ kubectl --namespace vikinglab get deployments&#x000A;NAME                      DESIRED   CURRENT   UP-TO-DATE   AVAILABLE   AGE&#x000A;vikinglab-db-postgresql   1         1         1            1           11d&#x000A;vikinglab-staging-web     2         2         2            2           11d</code></pre>
+<pre><code>➤ kubectl -n vikinglab apply -f nginx-deployment.yaml&#x000A;deployment.apps/nginx-deployment created</code></pre>
+<pre><code>➤ kubectl -n vikinglab get deployments&#x000A;NAME                      DESIRED   CURRENT   UP-TO-DATE   AVAILABLE   AGE&#x000A;vikinglab-db-postgresql   1         1         1            1           11d&#x000A;vikinglab-staging-web     2         2         2            2           11d&#x000A;nginx-deployment          3         3         3            3           14s</code></pre>
+</section>
+<section>
+<h3>Delete deployment</h3>
+<pre><code>➤ kubectl --namespace vikinglab delete deployment nginx-deployment&#x000A;deployment.extensions "nginx-deployment" deleted</code></pre>
+<pre><code>➤ kubectl -n vikinglab get deployments&#x000A;NAME                      DESIRED   CURRENT   UP-TO-DATE   AVAILABLE   AGE&#x000A;vikinglab-db-postgresql   1         1         1            1           11d&#x000A;vikinglab-staging-web     2         2         2            2           11d&#x000A;</code></pre>
+</section>
+</section>
+<section>
+<section>
+<h1>Pods</h1>
+<p>A pod is a group of one or more containers with shared storage/network and a specification for how to run the containers.</p>
+<a href='https://kubernetes.io/docs/concepts/workloads/pods/pod/'>More info</a>
+<br>
+<img src='images/module_03_pods.svg' style='width:70%'>
+</section>
+<section>
+<img src='images/module_03_nodes.svg' style='width:60%'>
+</section>
+<section>
+<pre><code>➤ kubectl get pods -n vikinglab&#x000A;NAME                                       READY   STATUS    RESTARTS   AGE&#x000A;vikinglab-db-postgresql-866bcfcbdc-2fm2l   1/1     Running   0          4d&#x000A;vikinglab-staging-web-78d6bbf75f-97ql9     1/1     Running   0          4d&#x000A;vikinglab-staging-web-78d6bbf75f-csw4c     1/1     Running   0          4d</code></pre>
+</section>
+<section>
+<h3>Describe</h3>
+<pre><code>➤ kubectl describe pods -n vikinglab vikinglab-staging-web-78d6bbf75f-97ql9&#x000A;Name:           vikinglab-staging-web-78d6bbf75f-97ql9&#x000A;Namespace:      vikinglab&#x000A;Node:           ip-10-27-4-4.eu-west-1.compute.internal/10.27.4.4&#x000A;Start Time:     Thu, 25 Oct 2018 13:51:59 +0200&#x000A;Labels:         app.kubernetes.io/instance=vikinglab-staging&#x000A;                app.kubernetes.io/name=vikinglab&#x000A;                pod-template-hash=3482669319&#x000A;Annotations:    <none>&#x000A;Status:         Running&#x000A;IP:             10.27.6.123&#x000A;Controlled By:  ReplicaSet/vikinglab-staging-web-78d6bbf75f&#x000A;Containers:&#x000A;  vikinglab:&#x000A;    Container ID:  docker://1607d030230f7405f60be56c6dc5a670846572b5e7039f1205c6ead87971d160&#x000A;    Image:         gcr.io/kubernetes-poc-200010/vikinglab:a3517ca-dirty&#x000A;    Image ID:      docker-pullable://gcr.io/kubernetes-poc-200010/vikinglab@sha256:1baf3202e51c5f7313d7e294e6224c52f2310ca08a8c4b4acbcd1c534964999a&#x000A;    Port:          8030/TCP&#x000A;    Host Port:     0/TCP&#x000A;    Command:&#x000A;      python&#x000A;      manage.py&#x000A;      runserver&#x000A;      0.0.0.0:8030&#x000A;    State:          Running&#x000A;      Started:      Thu, 25 Oct 2018 13:52:00 +0200&#x000A;    Ready:          True&#x000A;    Restart Count:  0&#x000A;    Environment Variables from:&#x000A;      vikinglab-staging  Secret     Optional: false&#x000A;      vikinglab-staging  ConfigMap  Optional: false&#x000A;    Environment:         <none>&#x000A;    Mounts:&#x000A;      /var/run/secrets/kubernetes.io/serviceaccount from default-token-nnkwj (ro)&#x000A;Conditions:&#x000A;  Type           Status&#x000A;  Initialized    True&#x000A;  Ready          True&#x000A;  PodScheduled   True&#x000A;Volumes:&#x000A;  default-token-nnkwj:&#x000A;    Type:        Secret (a volume populated by a Secret)&#x000A;    SecretName:  default-token-nnkwj&#x000A;    Optional:    false&#x000A;QoS Class:       BestEffort&#x000A;Node-Selectors:  <none>&#x000A;Tolerations:     node.kubernetes.io/not-ready:NoExecute for 300s&#x000A;                node.kubernetes.io/unreachable:NoExecute for 300s&#x000A;Events:          <none>&#x000A;                  NAME                                       READY   STATUS    RESTARTS   AGE&#x000A;                  vikinglab-db-postgresql-866bcfcbdc-2fm2l   1/1     Running   0          4d&#x000A;                  vikinglab-staging-web-78d6bbf75f-97ql9     1/1     Running   0          4d&#x000A;                  vikinglab-staging-web-78d6bbf75f-csw4c     1/1     Running   0          4d</code></pre>
+</section>
+<section>
+<h3>Bash</h3>
+<pre><code>➤ kubectl exec -ti vikinglab-staging-web-78d6bbf75f-97ql9 sh -n vikinglab&#x000A;/data/src # hostname&#x000A;vikinglab-staging-web-78d6bbf75f-97ql9</code></pre>
+</section>
+<section>
+<h3>Get logs</h3>
+<pre><code>➤ kubectl logs vikinglab-staging-web-78d6bbf75f-csw4c -n vikinglab&#x000A;...&#x000A;Not Found: /info.php&#x000A;WARNING 2018-10-25 14:13:47,607 log Not Found: /info.php&#x000A;[25/Oct/2018 14:13:47] "GET /info.php HTTP/1.1" 404 2065&#x000A;Not Found: /.&#x000A;WARNING 2018-10-25 14:13:59,432 log Not Found: /.&#x000A;[25/Oct/2018 14:13:59] "GET /. HTTP/1.1" 404 2048&#x000A;[25/Oct/2018 14:33:28] "GET / HTTP/1.1" 302 0&#x000A;[25/Oct/2018 14:34:41] "GET /static/js/core-all.js HTTP/1.1" 404 1722&#x000A;[25/Oct/2018 14:35:15] "GET /static/vikinglab/img/header.jpg HTTP/1.1" 200 425302&#x000A;[25/Oct/2018 14:35:15] "GET /static/vikinglab/img/header.jpg HTTP/1.1" 200 425302&#x000A;[25/Oct/2018 14:35:15] "GET /static/vikinglab/img/header.jpg HTTP/1.1" 200 425302&#x000A;</code></pre>
+</section>
+</section>
+<section>
+<section>
+<h1>Scaling</h1>
+<img src='images/module_05_scaling1.svg' style='width:60%'>
+</section>
+<section>
+<img src='images/module_05_scaling2.svg' style='width:60%'>
+</section>
+<section>
+<h3>Scale up</h3>
+<pre><code>➤ kubectl get pods -n vikinglab&#x000A;NAME                                       READY   STATUS    RESTARTS   AGE&#x000A;vikinglab-db-postgresql-866bcfcbdc-2fm2l   1/1     Running   0          4d&#x000A;vikinglab-staging-web-78d6bbf75f-97ql9     1/1     Running   0          4d&#x000A;vikinglab-staging-web-78d6bbf75f-csw4c     1/1     Running   0          4d</code></pre>
+<pre><code>➤ kubectl scale deployments/vikinglab-staging-web -n vikinglab --replicas=4&#x000A;deployment.extensions/vikinglab-staging-web scaled</code></pre>
+<pre><code>NAME                                       READY   STATUS    RESTARTS   AGE&#x000A;vikinglab-db-postgresql-866bcfcbdc-2fm2l   1/1     Running   0          4d&#x000A;vikinglab-staging-web-78d6bbf75f-97ql9     1/1     Running   0          4d&#x000A;vikinglab-staging-web-78d6bbf75f-csw4c     1/1     Running   0          4d&#x000A;vikinglab-staging-web-78d6bbf75f-vn2bk     1/1     Running   0          4s&#x000A;vikinglab-staging-web-78d6bbf75f-xp4qt     1/1     Running   0          4s</code></pre>
+</section>
+<section>
+<h3>Scale down</h3>
+<pre><code>➤ kubectl scale deployments/vikinglab-staging-web -n vikinglab --replicas=2&#x000A;deployment.extensions/vikinglab-staging-web scaled</code></pre>
+<pre><code>➤ kubectl get pods -n vikinglab&#x000A;NAME                                       READY   STATUS        RESTARTS   AGE&#x000A;vikinglab-db-postgresql-866bcfcbdc-2fm2l   1/1     Running       0          4d&#x000A;vikinglab-staging-web-78d6bbf75f-97ql9     1/1     Running       0          4d&#x000A;vikinglab-staging-web-78d6bbf75f-csw4c     1/1     Running       0          4d&#x000A;vikinglab-staging-web-78d6bbf75f-vn2bk     1/1     Terminating   0          16s&#x000A;vikinglab-staging-web-78d6bbf75f-xp4qt     1/1     Terminating   0          16s&#x000A;</code></pre>
+</section>
+</section>
+<section>
+<h1>Helm</h1>
+<p>Kubernetes Package Manager</p>
+</section>
+<section>
+<h4>Installation</h4>
+<ul>
+<li>
+Install helm (
+<a href='https://docs.helm.sh/using_helm/#installing-helm'>
+Guide
+</a>
+)
+</li>
+</ul>
+<pre><code>➤ helm init&#x000A;$HELM_HOME has been configured at /home/enermis/.helm.&#x000A;Warning: Tiller is already installed in the cluster.&#x000A;(Use --client-only to suppress this message, or --upgrade to&#x000A;upgrade Tiller to the current version.)&#x000A;Happy Helming!</code></pre>
+<p>This will install helm/tiller on the cluster and initialize your local configuration</p>
+</section>
+<section>
+<section>
+<h1>Charts</h1>
+<p>Package definitions</p>
+<p>Public stable repo</p>
+</section>
+<section>
+<h3>Find package to install</h3>
+<pre><code>➤ helm repo update&#x000A;Hang tight while we grab the latest from your chart repositories...&#x000A;...Skip local chart repository&#x000A;...Successfully got an update from the "stable" chart repository&#x000A;Update Complete. ⎈ Happy Helming!⎈</code></pre>
+<pre><code>➤ helm search mysql&#x000A;NAME                                    CHART VERSION   APP VERSION     DESCRIPTION&#x000A;stable/mysql                            0.10.2          5.7.14          Fast, reliable, scalable, and easy to use open-source rel...&#x000A;stable/mysqldump                        1.0.0           5.7.21          A Helm chart to help backup MySQL databases using mysqldump&#x000A;stable/prometheus-mysql-exporter        0.2.1           v0.11.0         A Helm chart for prometheus mysql exporter with cloudsqlp...&#x000A;stable/percona                          0.3.3           5.7.17          free, fully compatible, enhanced, open source drop-in rep...&#x000A;stable/percona-xtradb-cluster           0.3.0           5.7.19          free, fully compatible, enhanced, open source drop-in rep...&#x000A;stable/phpmyadmin                       1.2.2           4.8.3           phpMyAdmin is an mysql administration frontend&#x000A;stable/gcloud-sqlproxy                  0.5.0           1.11            Google Cloud SQL Proxy&#x000A;stable/mariadb                          5.2.2           10.1.36         Fast, reliable, scalable, and easy to use open-source rel...</code></pre>
+</section>
+<section>
+<h3>Install package</h3>
+<pre><code>➤ helm install stable/mysql --name mysql&#x000A;NAME:   mysql&#x000A;LAST DEPLOYED: Mon Oct 29 20:14:27 2018&#x000A;NAMESPACE: default&#x000A;STATUS: DEPLOYED&#x000A;RESOURCES:&#x000A;==> v1/Pod(related)&#x000A;NAME                              READY  STATUS   RESTARTS  AGE&#x000A;mysql-mysql-65c8964546-tbn4c  0/1    Pending  0         0s&#x000A;==> v1/Secret&#x000A;NAME             AGE&#x000A;mysql-mysql  0s&#x000A;==> v1/ConfigMap&#x000A;mysql-mysql-test  0s&#x000A;==> v1/PersistentVolumeClaim&#x000A;mysql-mysql  0s&#x000A;==> v1/Service&#x000A;mysql-mysql  0s&#x000A;==> v1beta1/Deployment&#x000A;mysql-mysql  0s&#x000A;NOTES:&#x000A;MySQL can be accessed via port 3306 on the following DNS name from within your cluster:&#x000A;mysql-mysql.default.svc.cluster.local&#x000A;To get your root password run:&#x000A;    MYSQL_ROOT_PASSWORD=$(kubectl get secret --namespace default mysql-mysql -o jsonpath="{.data.mysql-root-password}" | base64 --decode; echo)&#x000A;To connect to your database:&#x000A;1. Run an Ubuntu pod that you can use as a client:&#x000A;    kubectl run -i --tty ubuntu --image=ubuntu:16.04 --restart=Never -- bash -il&#x000A;2. Install the mysql client:&#x000A;    $ apt-get update && apt-get install mysql-client -y&#x000A;3. Connect using the mysql cli, then provide your password:&#x000A;    $ mysql -h mysql-mysql -p&#x000A;To connect to your database directly from outside the K8s cluster:&#x000A;    MYSQL_HOST=127.0.0.1&#x000A;    MYSQL_PORT=3306&#x000A;    # Execute the following command to route the connection:&#x000A;    kubectl port-forward svc/mysql-mysql 3306&#x000A;    mysql -h ${MYSQL_HOST} -P${MYSQL_PORT} -u root -p${MYSQL_ROOT_PASSWORD}</code></pre>
+</section>
+<section>
+<h3>List installed packages</h3>
+<pre><code>➤ helm list&#x000A;NAME                    REVISION        UPDATED                         STATUS          CHART                   APP VERSION     NAMESPACE&#x000A;mysql                   1               Mon Oct 29 20:14:27 2018        DEPLOYED        mysql-0.10.2            5.7.14          default&#x000A;vikinglab-db            1               Thu Oct 18 10:22:50 2018        DEPLOYED        postgresql-0.18.1       9.6.2           vikinglab&#x000A;vikinglab-staging       2               Thu Oct 25 17:04:04 2018        DEPLOYED        vikinglab-0.1.0         1.0             vikinglab</code></pre>
+<pre><code>➤ kubectl get pods&#x000A;NAME                               READY   STATUS    RESTARTS   AGE&#x000A;mysql-65c8964546-tbn4c             1/1     Running   0          8m</code></pre>
+</section>
+<section>
+<h3>Uninstall package</h3>
+<pre><code>➤ helm delete mysql&#x000A;release "mysql" deleted</code></pre>
+<pre><code>➤ helm ls&#x000A;NAME                    REVISION        UPDATED                         STATUS          CHART                   APP VERSION     NAMESPACE&#x000A;vikinglab-db            1               Thu Oct 18 10:22:50 2018        DEPLOYED        postgresql-0.18.1       9.6.2           vikinglab&#x000A;vikinglab-staging       2               Thu Oct 25 17:04:04 2018        DEPLOYED        vikinglab-0.1.0         1.0             vikinglab</code></pre>
+<pre><code>➤ kubectl get pods&#x000A;NAME                               READY   STATUS        RESTARTS   AGE&#x000A;mysql-65c8964546-tbn4c             0/1     Terminating   0          12m&#x000A;</code></pre>
+</section>
+</section>
+<section>
+<section>
+<h1>New Chart</h1>
+<pre><code>➤ helm create test-helm&#x000A;Creating test-helm&#x000A;➤ cd test-helm&#x000A;test-helm ➤ tree&#x000A;.&#x000A;├── charts&#x000A;├── Chart.yaml           # Manifest file&#x000A;├── templates&#x000A;│   ├── deployment.yaml&#x000A;│   ├── _helpers.tpl&#x000A;│   ├── ingress.yaml&#x000A;│   ├── NOTES.txt&#x000A;│   └── service.yaml&#x000A;└── values.yaml&#x000A;&#x000A;2 directories, 7 files</code></pre>
+</section>
+<section>
+<h3>Install chart</h3>
+<pre><code>#!/bin/bash&#x000A;set -o errexit&#x000A;&#x000A;: ${ENVIRONMENT:=prod}&#x000A;: ${KUBE_NAMESPACE:=vikinglab}&#x000A;: ${KUBE_CONTEXT:=eks-prod}&#x000A;DRY_RUN=${DRY_RUN:+1}&#x000A;&#x000A;KUBECTL="kubectl --context=${KUBE_CONTEXT}"&#x000A;$KUBECTL get namespace "$KUBE_NAMESPACE" 2>/dev/null >&2 || {&#x000A;    # Namespace does not exist, create it&#x000A;    if [[ $DRY_RUN ]]; then&#x000A;        echo "Would create namespace ${KUBE_NAMESPACE}"&#x000A;    else&#x000A;        $KUBECTL create namespace "$KUBE_NAMESPACE" --dry-run -o yaml | $KUBECTL apply -f -&#x000A;    fi&#x000A;}&#x000A;&#x000A;HELM_FLAGS=&#x000A;if [[ $DRY_RUN ]]; then&#x000A;    HELM_FLAGS="--dry-run --debug"&#x000A;fi&#x000A;&#x000A;# Deploy app&#x000A;sops -d ./values-${ENVIRONMENT}.yaml \&#x000A;    | perl -pe 's/(secrets|[A-Z]|\.key)\K_encrypted(?=\:)//g' \&#x000A;    | helm upgrade --install --namespace ${KUBE_NAMESPACE} -f - $HELM_FLAGS vikinglab-${ENVIRONMENT} ./vikinglab-helm&#x000A;            Configuration of the application</code></pre>
+</section>
+</section>
+<section>
+<h3>Sops</h3>
+</section>
+<section>
+<h3>Ingress</h3>
+<p>intermediate load balancer/dns</p>
+<img src='images/ingress.jpg' style='width:80%'>
+</section>
+<section>
+<section>
+<h1>Deploy viking-lab</h1>
+<ol>
+<li>
+Build app container
+<pre><code>./build.sh</code></pre>
+</li>
+<li>
+re-deploy helm package
+<pre><code>ENVIRONMENT=staging ./k8s/install.sh&#x000A;&#x000A;</code></pre>
+</li>
+</ol>
+</section>
+</section>
+</div>
+</div>
+<script src='reveal.js/lib/js/head.min.js'></script>
+<script src='reveal.js/js/reveal.min.js'></script>
+<script>
+  // Full list of configuration options available here: JPL
+  // https://github.com/hakimel/reveal.js#configuration
+  Reveal.initialize({
+    controls: true,
+    progress: true,
+    history: true,
+    center: false,
+  
+    theme: Reveal.getQueryHash().theme, // available themes are in /css/theme
+    transition: Reveal.getQueryHash().transition || 'linear', // default/cube/page/concave/zoom/linear/fade/none
+  
+    // Optional libraries used to extend on reveal.js
+    dependencies: [
+        { src: 'reveal.js/lib/js/classList.js', condition: function() { return !document.body.classList; } },
+        { src: 'reveal.js/plugin/markdown/showdown.js', condition: function() { return !!document.querySelector( '[data-markdown]' ); } },
+        { src: 'reveal.js/plugin/markdown/markdown.js', condition: function() { return !!document.querySelector( '[data-markdown]' ); } },
+        { src: 'reveal.js/plugin/highlight/highlight.js', async: true, callback: function() { hljs.initHighlightingOnLoad(); } },
+        { src: 'reveal.js/plugin/zoom-js/zoom.js', async: true, condition: function() { return !!document.body.classList; } },
+        { src: 'reveal.js/plugin/notes/notes.js', async: true, condition: function() { return !!document.body.classList; } },
+        { src: 'reveal.js/plugin/highlight/highlight.js', async: true, condition: function() { return !!document.body.classList; } },
+        // { src: 'reveal.js/plugin/remotes/remotes.js', async: true, condition: function() { return !!document.body.classList; } }
+    ]
+  });
+</script>
+<script>
+var link = document.createElement( 'link' );
+link.rel = 'stylesheet';
+link.type = 'text/css';
+link.href = window.location.search.match( /print-pdf/gi ) ? 'css/print/pdf.css' : 'css/print/paper.css';
+document.getElementsByTagName( 'head' )[0].appendChild( link );
+</script>
+</body>
+</html>
